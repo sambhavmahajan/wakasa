@@ -48,5 +48,5 @@ JSON Payload:
   "message": "test"
 }
 ```
-Type: POST <br>
+Endpoint: /api/V1 POST <br>
 Response codes: 400, 500, 200
