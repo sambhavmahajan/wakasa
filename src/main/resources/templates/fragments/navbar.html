@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="navbar">
+  <a href="#home">Home</a>
+  <a href="/login">Login</a>
+  <a href="/register">Register</a>
+  <a href="#Documentation">Developers</a>
+  <a href="#about">About</a>
+    <div sec:authorize="isAuthenticated()">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-link">
+                Logout
+            </button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

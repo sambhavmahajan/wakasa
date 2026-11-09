@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta id="_csrf" th:content="${_csrf.token}">
+    <meta id="_csrf_header" th:content="${_csrf.headerName}">
+    <title>Log in</title>
+    <div th:replace="~{fragments/navbar.html :: navbar}"/>
+</head>
+<script>
+    async function register(event) {
+        event.preventDefault()
+        const Username = document.getElementById('email').value;
+        const Password = document.getElementById('password').value;
+        const ConfirmPassword = document.getElementById('confirmPassword').value;
+        const csrfHeader = document.getElementById('_csrf_header').content;
+        const csrfToken = document.getElementById('_csrf').content;
+        const response = await fetch("/register", {
+            method: "POST",
+            body: JSON.stringify({
+                email: Username,
+                password: Password,
+                confirmPassword: ConfirmPassword
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+                [csrfHeader]: csrfToken
+            }
+        });
+        const data = await response.text()
+        const msg = document.getElementById('message');
+        if(response.status === 201) {
+            msg.innerText = data
+            msg.style.backgroundColor = 'green';
+        } else {
+            msg.innerText = data
+            msg.style.backgroundColor = 'red';
+        }
+    }
+</script>
+<body>
+<h1>Please register</h1>
+<p id="message" ></p>
+<form onsubmit="register(event)">
+    <div>
+        <input type="text" id = "email" name="email" placeholder="Username"/>
+    </div>
+    <div>
+        <input type="password" id="password" name="password" placeholder="Password"/>
+    </div>
+    <div>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password"/>
+    </div>
+    <input type="submit" value="Register"/>
+</form>
+</body>
+</html>

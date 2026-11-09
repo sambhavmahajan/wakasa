@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta id="_csrf" th:content="${_csrf.token}">
+    <meta id="_csrf_header" th:content="${_csrf.headerName}">
+    <title>Log in</title>
+    <div th:replace="~{fragments/navbar.html :: navbar}"/>
+</head>
+<script>
+    async function dashboard(event) {
+        event.preventDefault()
+        const Value = document.getElementById('value').value;
+        const Username = document.getElementById('smtpusername').value;
+        const Host = document.getElementById('host').value;
+        const Port = document.getElementById('port').value;
+        const Password = document.getElementById('password').value;
+        const FromEmail = document.getElementById('fromEmail').value;
+        const csrfHeader = document.getElementById('_csrf_header').content;
+        const csrfToken = document.getElementById('_csrf').content;
+        const response = await fetch("/dashboard", {
+            method: "POST",
+            body: JSON.stringify({
+                value: Value,
+                smtpUsername: Username,
+                host: Host,
+                port: Port,
+                password: Password,
+                fromEmail: FromEmail
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+                [csrfHeader]: csrfToken
+            }
+        });
+        const data = await response.text()
+        const msg = document.getElementById('message');
+        if(response.status === 200) {
+            msg.innerText = data
+            msg.style.backgroundColor = 'green';
+        } else {
+            msg.innerText = data
+            msg.style.backgroundColor = 'red';
+        }
+    }
+</script>
+<body>
+<h1>Dashboard</h1>
+<p id="message" ></p>
+<form onsubmit="dashboard(event)">
+    <div>
+        <input th:value="${tokenDto.value()}" type="text" id = "value" name="value" placeholder="Value" readonly/>
+    </div>
+    <div>
+        <input th:value="${tokenDto.smtpUsername()}" type="text" id="smtpusername" name="smtpusername" placeholder="SMTP Username"/>
+    </div>
+    <div>
+        <input th:value="${tokenDto.host()}" type="text" id="host" name="host" placeholder="Host"/>
+    </div>
+    <div>
+        <input th:value="${tokenDto.port()}" type="number" min="25" id="port" name="port" placeholder="Port"/>
+    </div>
+    <div>
+        <input th:value="${tokenDto.password()}" type="password" id="password" name="password" placeholder="Password"/>
+    </div>
+    <div>
+        <input th:value="${tokenDto.fromEmail()}" type="text" id="fromEmail" name="fromEmail" placeholder="From Email"/>
+    </div>
+    <input type="submit" value="Save"/>
+</form>
+</body>
+</html>
