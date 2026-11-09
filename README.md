@@ -53,7 +53,7 @@ Endpoint: /api/V1 POST <br>
 Response codes: 400, 500, 200
 
 ### Benchmarks
-Explain Analyze run on last column of app_token, fetching by token value(tested on postgresql 18)
+Explain Analyze run on last column of app_token, fetching by token value(tested on postgresql 18, seeded by UserAndTokenSeeder(see dataseeders package))
 ```sql
 explain analyze
 select * from app_token
