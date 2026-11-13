@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.concurrent.Semaphore;
+
 @Controller
 @AllArgsConstructor
 public class AuthController {
     private final AppUserService userService;
+    private final Semaphore semaphore = new Semaphore(100, true);
     @GetMapping("/login")
     public String login() {
         return "login";
@@ -31,7 +34,12 @@ public class AuthController {
     }
     @PostMapping("/register")
     public ResponseEntity<String> registerAPI(@RequestBody RegisterDTO register) {
+        boolean acquiredLock = false;
         try {
+            if(!semaphore.tryAcquire()) {
+                return ResponseEntity.status(429).body("Too many requests");
+            }
+            acquiredLock = true;
             userService.createNewUser(register);
         } catch(PasswordMissmatchException ex) {
             return ResponseEntity.status(400).body("Passwords do not match");
@@ -41,6 +49,8 @@ public class AuthController {
             return ResponseEntity.status(400).body(ex.getMessage());
         } catch(RuntimeException ex) {
             return ResponseEntity.status(500).body(ex.getMessage());
+        } finally {
+            if(acquiredLock) semaphore.release();
         }
         return ResponseEntity.status(201).body("Kindly login to " + register.email() + ", registration successful");
     }
