@@ -4,13 +4,13 @@ An email as a service application. Create an account, configure SMTP configurati
 ## System Design
 <img width="1047" height="583" alt="image" src="https://github.com/user-attachments/assets/3f3e0684-6264-49ce-803e-d50d8f0e62bb" />
 
-### Profiles
+## Profiles
 - dev, prod, data-seeder profiles, dev is used for testing and has h2 console by default.
 - prod needs configuration.
 - data-seeder is used for seed 10,000 users
 - set PROFILE env to either dev or prod to change between them.
 
-### .env
+## .env
 ```
 REDIS_HOST=redis
 REDIS_PORT=6379
@@ -22,24 +22,24 @@ PORT=10000
 PROFILE=dev
 ```
 
-### Email, Password and Secret standards
+## Email, Password and Secret standards
 - Apache Commons Validator EmailValidator class is used to validate the email, which uses RFC 822 standards.
 - Password is salted with bycrypt.
 - Secret(key) is generated using sha256(email + randomLongNumber)
 
-### Run
+## Run
 ```console
 docker compose up --build
 ```
 Configure ```spring.jpa.hibernate.ddl-auto``` property for dev or prod as create(initial) and later as validate(subsequent runs).
 
-### Useage
+## Useage
 - Create account
 - Login account
 - Insert required SMTP configuration in dashboard
 - Click save
 
-### API Request
+## API Request
 JSON Payload:
 ```
 {
@@ -52,14 +52,14 @@ JSON Payload:
 Endpoint: /api/V1 POST <br>
 Response codes: 400, 500, 200
 
-### Benchmarks
+## Benchmarks
 Explain Analyze run on last column of app_token, fetching by token value(tested on postgresql 18, seeded by UserAndTokenSeeder(see dataseeders package))
 ```sql
 explain analyze
 select * from app_token
 where token_value='b6f21235a19d14b6b44b091d6d34d3f0e8510d1763b74c2b5bbee5c19d6df836'
 ```
-| Test # | Without Index (ms) | With Index (ms) |
+| Test No. | Without Index (ms) | With Index (ms) |
 |---:|---:|---:|
 | 1 | 2.051 | 0.103 |
 | 2 | 3.222 | 0.058 |
@@ -76,3 +76,7 @@ where token_value='b6f21235a19d14b6b44b091d6d34d3f0e8510d1763b74c2b5bbee5c19d6df
 Performance Improvement:
 - Average execution time reduced by 96.57%.
 - Query execution is approximately 29.18× faster with the index.
+
+## License
+
+This project is licensed under the MIT License. See the ![LICENSE](/LICENSE) file for more details.
